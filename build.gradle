@@ -1,0 +1,84 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+plugins {
+    id 'java-library'
+    id 'com.github.johnrengelman.shadow' version '7.1.0'
+    id 'maven-publish'
+}
+
+group = 'io.github.galaxyvn'
+version = '1.0.24-SNAPSHOT'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
+    maven {
+        name 'mangostudio'
+        url 'https://mangostudio.jfrog.io/artifactory/maven'
+        credentials(PasswordCredentials)
+    }
+}
+
+dependencies {
+    // Referenced dependencies
+    compileOnly 'org.spigotmc:spigot-api:1.18.1-R0.1-SNAPSHOT'
+    compileOnly 'me.clip:placeholderapi:2.11.1'
+
+    // Shaded dependencies
+    api 'org.bstats:bstats-bukkit:2.2.1'
+    api 'com.github.cryptomorin:XSeries:8.5.0.1'
+    api 'com.zaxxer:HikariCP:4.0.3'
+    api 'org.slf4j:slf4j-api:1.7.32'
+    api 'org.slf4j:slf4j-nop:1.7.32'
+}
+
+task processSource(type: Sync) {
+    from sourceSets.main.java
+    inputs.property 'version', version
+    filter(ReplaceTokens, tokens: [version: version])
+    into "$buildDir/src"
+}
+
+compileJava {
+    options.compilerArgs += ['-parameters']
+    options.fork = true
+    options.forkOptions.executable = 'javac'
+    options.encoding = 'UTF-8'
+    source = processSource.outputs
+}
+
+shadowJar {
+    archiveClassifier.set(null)
+
+    relocate('org.intellij', 'io.github.galaxyvn.ggarden.lib.intellij')
+    relocate('org.jetbrains', 'io.github.galaxyvn.ggarden.lib.jetbrains')
+    relocate('com.zaxxer.hikari', 'io.github.galaxyvn.ggarden.lib.hikaricp')
+    relocate('org.slf4j', 'io.github.galaxyvn.ggarden.lib.slf4j')
+    relocate('org.bstats', 'io.github.galaxyvn.ggarden.lib.bstats')
+    relocate('com.cryptomorin.xseries', 'io.github.galaxyvn.ggarden.lib.xseries')
+}
+
+publishing {
+    publications {
+        shadow(MavenPublication) { publication ->
+            project.shadow.component(publication)
+            artifactId = 'ggarden'
+            pom {
+                name = 'ggarden'
+            }
+        }
+    }
+    repositories {
+        maven {
+            def releasesRepoUrl = 'https://mangostudio.jfrog.io/artifactory/maven'
+            def snapshotsRepoUrl = 'https://mangostudio.jfrog.io/artifactory/maven'
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            credentials(PasswordCredentials)
+        }
+    }
+}
+
+build.dependsOn shadowJar

@@ -1,2 +1,2 @@
 # GGarden
-thicc libary
+ Thicc libary

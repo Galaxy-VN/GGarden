@@ -1,0 +1,5 @@
+name: GGarden
+version: '${version}'
+main: io.github.galaxyvn.ggarden.GGarden
+api-version: 1.18
+authors: [ GalaxyVN ]
