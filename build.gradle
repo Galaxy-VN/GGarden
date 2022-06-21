@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'io.github.galaxyvn'
-version = '1.0.24-SNAPSHOT'
+version = '1.0.38-SNAPSHOT'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -15,11 +15,11 @@ repositories {
     mavenCentral()
     maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
     maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
-    maven {
-        name 'mangostudio'
-        url 'https://mangostudio.jfrog.io/artifactory/maven'
-        credentials(PasswordCredentials)
-    }
+//    maven {
+//        name 'mangostudio'
+//        url 'https://mangostudio.jfrog.io/artifactory/maven'
+//        credentials(PasswordCredentials)
+//    }
 }
 
 dependencies {
@@ -71,14 +71,14 @@ publishing {
             }
         }
     }
-    repositories {
-        maven {
-            def releasesRepoUrl = 'https://mangostudio.jfrog.io/artifactory/maven'
-            def snapshotsRepoUrl = 'https://mangostudio.jfrog.io/artifactory/maven'
-            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-            credentials(PasswordCredentials)
-        }
-    }
+//    repositories {
+//        maven {
+//            def releasesRepoUrl = 'https://mangostudio.jfrog.io/artifactory/maven'
+//            def snapshotsRepoUrl = 'https://mangostudio.jfrog.io/artifactory/maven'
+//            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+//            credentials(PasswordCredentials)
+//        }
+//    }
 }
 
 build.dependsOn shadowJar
